@@ -8,9 +8,18 @@ const listingSchema=new Schema({
     },
     description:String,
     image:{
-        filename:String,
-       url:String,
-        
+        filename: {
+            type: String,
+          },
+          url: {
+            type: String,
+            default:
+              "https://www.komandoo.com/wp-content/uploads/2022/05/KOM_Jacuzzi-beach-villa_Aerial-18_1600x900.jpg",
+            set: (v) =>
+              v === ""
+                ? "https://www.komandoo.com/wp-content/uploads/2022/05/KOM_Jacuzzi-beach-villa_Aerial-18_1600x900.jpg"
+                : v,
+          }, 
     },
     price:Number,
     location:String,
