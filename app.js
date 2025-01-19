@@ -9,6 +9,10 @@ const ExpressError=require("./utils/ExpressError.js")
 const {listingSchema,reviewSchema}=require("./schema.js");
 const Review=require("./models/review.js")
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
+
+
 
 const path=require("path");
 
@@ -23,8 +27,6 @@ async function main() {
 }
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
@@ -69,7 +71,7 @@ app.get("/listings/new",(req,res)=>{
 //show route
 app.get("/listings/:id",wrapAsync(async (req,res)=>{
     let {id}=req.params;
-   const listing= await Listing.findById(id);
+   const listing= await Listing.findById(id).populate("reviews");
    res.render("listings/show",{listing});
 }));
 
@@ -101,7 +103,7 @@ app.delete("/listings/:id",wrapAsync(async(req,res)=>{
 }));
 
 //reviews
-//post route
+//post review route
 app.post("/listings/:id/reviews",validateReview,wrapAsync (async(req,res)=>{
     console.log("Request Body:", req.body)
   let listing= await  Listing.findById(req.params.id);
@@ -113,6 +115,14 @@ app.post("/listings/:id/reviews",validateReview,wrapAsync (async(req,res)=>{
 
   res.redirect(`/listings/${listing._id}`);
 }));
+//delete review route
+app.delete("/listings/:id/reviews/:reviewId",wrapAsync(async(req,res)=>{
+    let {id,reviewId}=req.params;
+  await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
+  await  Review.findByIdAndDelete(reviewId);
+
+  res.redirect(`/listings/${id}`);
+}))
 
 
 app.all("*",(req,res,next)=>{
