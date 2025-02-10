@@ -9,18 +9,15 @@
 
             <img class="card-img-top show-img" src="<%= listing.image.url%>" alt="listing_image">
             <div class="card-body">
-                <p class="card-text">
-                    <%=listing.description%>
-                        <br>
-                        &#8377;<%=listing.price.toLocaleString("en-IN")%>\night
-                            <br>
-                            <%=listing.location%>
-                                <br>
-                                <%=listing.country%>
-                </p>
+                <p class="card-text">Owend by : <i><%=listing.owner.username%></i> </p>
+                <p class="card-text"> <%=listing.description%></p>     
+                <p class="card-text">&#8377;<%=listing.price.toLocaleString("en-IN")%>\night</p> 
+                <p class="card-text"> <%=listing.location%></p>
+                <p class="card-text"><%=listing.country%></p>              
             </div>
         </div>
-        <div class="btns row mt-3"> 
+        
+        <div class="btns row mt-3 mb-3"> 
             <div class="col-auto offset-3">
                 <a class="btn btn-dark edit-btn" href="/listings/<%=listing._id%>/edit">Edit</a>
             </div>
@@ -30,9 +27,12 @@
                 </form>
             </div>
         </div>
+    
 
+      
         <div class="col-8 offset-3">
             <hr>
+            <% if(currentUser) {%>
             <h4>Leave a Review</h4>
             <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
                 <div class="mb-3 mt-3">
@@ -46,7 +46,9 @@
                 </div>
                 <button class="btn btn-dark mb-3">Submit</button>
             </form>
+            
             <hr>
+            <%}%>
             <p><b>All Reviews</b></p>
             
             <div class="row">
@@ -54,9 +56,9 @@
 
                     <div class="card col-5 me-3 mb-3 ">
                         <div class="card-body">
-                            <h4>Jan Doe</h4>
+                            <h4><%=review.author.username %></h4>
                             <p class="card-text"><%=review.comment%></p>
-                            <p class="card-text"><%=review.rating%>Star</p>
+                            <p class="card-text"><%=review.rating%><i class="fa-solid fa-star"></i></p>
                          </div>
                     <form method="POST" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE" >
                         <button class="btn btn-sm btn-dark mb-2">Delete</button>
@@ -64,5 +66,6 @@
                     </div>  
                   <% }%>
             </div>
+            
         </div>   
 </div>
